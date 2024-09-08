@@ -18,7 +18,7 @@ LiquidCrystal_I2C LCD(0x27, 20, 4);
 //
 //    - PAD 4 * 4 touches
 //      . broches D2 a D9
-
+//
 // -----------------------------------------------------------------------------
 #include <Keypad.h>
 #define ROWS 4
