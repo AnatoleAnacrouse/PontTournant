@@ -6,9 +6,11 @@
 //
 #define VERSION "   VERSION 0.5"
 //
-//DESCRIPTION :
+// ----------------------------- DESCRIPTION ----------------------------------
 //
-// -----------------------------------------------------------------------------
+//
+// ----------------------------- MATERIELS ------------------------------------
+//
 //    - AFFICHEUR 4 x 20 I2C
 //       . SCL sur A5
 //       . SDA sur A4
@@ -16,10 +18,10 @@
 #include <LiquidCrystal_I2C.h>
 LiquidCrystal_I2C LCD(0x27, 20, 4);
 //
+//
 //    - PAD 4 * 4 touches
 //      . broches D2 a D9
 //
-// -----------------------------------------------------------------------------
 #include <Keypad.h>
 #define ROWS 4
 #define COLS 4
@@ -32,33 +34,32 @@ const char kpKeys[ROWS][COLS] = {
 byte rowKpPin [4] = {9, 8, 7, 6};
 byte colKpPin [4] = {5, 4, 3, 2};
 Keypad kp = Keypad(makeKeymap(kpKeys), rowKpPin, colKpPin, ROWS, COLS);
-
-// -----------------------------------------------------------------------------
+//
+//
 //  - Moteur à pas NEMA 14 200 pas/rotation avec reduction 8:1 ()
 //       via A4988 sur les broches D11 (DIR) et D12 (STEP)
-
+//
 //#include <Servo.h>
 #include <AccelStepper.h>
 #define PIN_MOT_STEP 12
 #define PIN_MOT_DIR 11
 const int stepsPerRevolution = 1600;
 AccelStepper pontTournant(1, PIN_MOT_STEP, PIN_MOT_DIR);
-
+//
 // -----------------------------------------------------------------------------
 //    - Buzzer
 //#include <Tone.h>
 #define PIN_BUZZER 13
 
-// -----------------------------------------------------------------------------
+// --------------------------- CONSTANTES --------------------------------------
 
 // Constantes globales
 #define OK 0
 #define ERROR -1
 #define SECOND 1000
 
-// -----------------------------------------------------------------------------
+// ------------------------CONFIGURATION DU PONT -------------------------------
 
-// Configuration du pont
 #define NB_MAX_VOIE 40
 // Pour une reduction de 1/8 d'un moteur de 200 pas / rev. il y a 1600 pas/rev.
 // pour 40 voies, chaque voie necessite un déplacement de 40 * n
