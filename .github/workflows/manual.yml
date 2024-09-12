@@ -1,10 +1,18 @@
 name: "Pont tournant"
-uses: wokwi/wokwi-ci-action@v1
-on: [push]
-with:
-    token: ${{ secrets.WOKWI_PONT_TOURNANT_TOKEN }}
-    path: / # directory with wokwi.toml, relative to repo's root
-    timeout: 10000
-    expect_text: 'Hello'
-    fail_text: 'Error'
-    serial_log_file: 'log.txt' # optional
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Test with Wokwi
+        uses: wokwi/wokwi-ci-action@v1
+        with:
+          token: ${{ secrets.WOKWI_PONT_TOURNANT_TOKEN }}
+          expect_text: 'Hello'
+          # scenario: 'button.test.yaml'
