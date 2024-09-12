@@ -13,6 +13,6 @@ jobs:
       - name: Test with Wokwi
         uses: wokwi/wokwi-ci-action@v1
         with:
-          token: ${{ secrets.WOKWI_PONT_TOURNANT_TOKEN }}
+          token: ${{ secrets.WOKWI_CLI_TOKEN }}
           expect_text: 'Hello'
           # scenario: 'button.test.yaml'
