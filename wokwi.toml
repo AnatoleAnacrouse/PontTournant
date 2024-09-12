@@ -1,4 +1,4 @@
 [wokwi]
-version = 0.5
-firmware = 'C//Users/Chenes/AppData/Local/Temp/arduino/sketches/470D5B952B54E6B27A8E04C749E9EB73/PontTournant.ino.hex'
-elf = 'C//Users/Chenes/AppData/Local/Temp/arduino/sketches/470D5B952B54E6B27A8E04C749E9EB73/PontTournant.ino.elf'
+version = 1
+elf = "build/PontTournant.ino.elf"
+firmware = "build/PontTournant.ino.hex"
