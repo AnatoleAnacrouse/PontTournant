@@ -2,5 +2,5 @@
 version = 1
 #elf = ".pio/build/PontTournant.ino.elf"
 #firmware = ".pio/build/PontTournant.ino.hex"
-elf = ".pio/build/esp32/firmware.elf"
-firmware = ".pio/build/esp32/firmware.hex"
+elf = ".pio/build/firmware.elf"
+firmware = ".pio/build/firmware.hex"
