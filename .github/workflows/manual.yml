@@ -1,4 +1,8 @@
 name: 'Wokwi PontTournant'
+on:
+  workflow_dispatch:
+push:
+  
 description: 'This action tests your firmware builds with the Wokwi Simulator'
 branding:
   color: blue
