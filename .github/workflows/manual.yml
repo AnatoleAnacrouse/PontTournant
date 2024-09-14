@@ -1,49 +1,28 @@
 name: 'Wokwi PontTournant'
+description: 'This action tests your firmware builds with the Wokwi Simulator'
+
 on:
   workflow_dispatch:
+
 push:
-  
-description: 'This action tests your firmware builds with the Wokwi Simulator'
-branding:
-  color: blue
-  icon: play
-inputs:
-  token:
-    description: 'Wokwi API token'
-    required: true
-  path:
-    description: 'Path to the directory where wokwi.toml is, relative to the root of your repository'
-    default: '/'
-    required: false
-  timeout:
-    description: 'Timeout in milliseconds for the simulation'
-    default: '10000'
-    required: false
-  expect_text:
-    description: 'Text to expect in the serial output, test will fail if not found'
-    default: ''
-    required: false
-  fail_text:
-    description: 'Text that fails the test if found in the serial output'
-    default: ''
-    required: false
-  scenario:
-    description: 'Path to scenario yaml file (relative to project directory)'
-    default: ''
-    required: false
-  diagram_file:
-    description: 'Custom diagram file'
-    default: 'diagram.json'
-    required: false
-  elf:
-    description: 'Custom firmware ELF path'
-    default: ''
-    required: false
-  serial_log_file:
-    description: 'Serial log file to be written (relative to project directory)'
-    default: ''
-    required: false
-    
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Test with Wokwi
+        uses: wokwi/wokwi-ci-action@v1
+        with:
+          token: ${{ secrets.WOKWI_CLI_TOKEN }}
+          path: / # directory with wokwi.toml, relative to repo's root
+          timeout: 10000
+          expect_text: 'Hello'
+          fail_text: 'Error'
+          # scenario: 'button.test.yaml'
+          serial_log_file: 'log-pontTourant.txt'
+          
 runs:
   using: 'composite'
   steps:
@@ -64,27 +43,3 @@ runs:
         CI_EXPECT_TEXT: ${{ inputs.expect_text }}
         CI_FAIL_TEXT: ${{ inputs.fail_text }}
       shell: bash
-
-
-#name: "Pont tournant"
-#
-#on:
-#  workflow_dispatch:
-#push:
-#
-#jobs:
-#  build-and-test:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v3
-#
-#      - name: Test with Wokwi
-#        uses: wokwi/wokwi-ci-action@v1
-#        with:
-#          token: ${{ secrets.WOKWI_CLI_TOKEN }}
-#          path: / # directory with wokwi.toml, relative to repo's root
-#          timeout: 10000
-#          expect_text: 'Hello'
-#          fail_text: 'Error'
-#          # scenario: 'button.test.yaml'
-#          serial_log_file: 'log-pontTourant.txt'
