@@ -12,20 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Test with Wokwi
-        uses: wokwi/wokwi-ci-action@v1
-        with:
-          token: ${{ secrets.WOKWI_CLI_TOKEN }}
-          path: / # directory with wokwi.toml, relative to repo's root
-          timeout: 10000
-          expect_text: 'Hello'
-          fail_text: 'Error'
-          # scenario: 'button.test.yaml'
-          serial_log_file: 'log-pontTourant.txt'
-          
-runs:
-  using: 'composite'
-  steps:
     - name: Install wokwi-cli
       run: |
         wget -q -O /usr/local/bin/wokwi-cli https://github.com/wokwi/wokwi-cli/releases/latest/download/wokwi-cli-linuxstatic-x64
@@ -43,3 +29,14 @@ runs:
         CI_EXPECT_TEXT: ${{ inputs.expect_text }}
         CI_FAIL_TEXT: ${{ inputs.fail_text }}
       shell: bash
+      
+      - name: Test with Wokwi
+        uses: wokwi/wokwi-ci-action@v1
+        with:
+          token: ${{ secrets.WOKWI_CLI_TOKEN }}
+          path: / # directory with wokwi.toml, relative to repo's root
+          timeout: 10000
+          expect_text: 'Hello'
+          fail_text: 'Error'
+          # scenario: 'button.test.yaml'
+          serial_log_file: 'log-pontTourant.txt'
