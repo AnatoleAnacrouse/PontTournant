@@ -1,4 +1,4 @@
 [wokwi]
 version = 1
-elf = "build/PontTournant.ino.elf"
-firmware = "build/PontTournant.ino.hex"
+elf = ".pio/build/PontTournant.ino.elf"
+firmware = ".pio/build/PontTournant.ino.hex"
