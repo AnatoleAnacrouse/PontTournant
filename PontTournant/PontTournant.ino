@@ -428,6 +428,5 @@ void loop() {
 
   // Liberer le pont avant prochaine manoeuvre
     attendreDeplacementEngin();
-  //delay(1*SECOND);
 }
 
