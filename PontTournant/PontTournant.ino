@@ -8,6 +8,7 @@
 //
 //DESCRIPTION :
 //
+// Configuration de l'afficheur LCD
 // -----------------------------------------------------------------------------
 //    - AFFICHEUR 4 x 20 I2C
 //       . SCL sur A5
@@ -20,6 +21,7 @@ LiquidCrystal_I2C LCD(0x27, 20, 4);
 //      . broches D2 a D9
 // -----------------------------------------------------------------------------
 
+// Configuration du pavé numérique
 #include <Keypad.h>
 #define ROWS 4
 #define COLS 4
@@ -34,6 +36,7 @@ byte colKpPin [4] = {5, 4, 3, 2};
 Keypad kp = Keypad(makeKeymap(kpKeys), rowKpPin, colKpPin, ROWS, COLS);
 
 // -----------------------------------------------------------------------------
+// Configuration du moteur pas à pas
 //  - Moteur à pas NEMA 14 200 pas/rotation avec reduction 2:1 ()
 //       via A4988 sur les broches D11 (DIR) et D12 (STEP)
 
@@ -46,6 +49,13 @@ AccelStepper pontTournant(1, PIN_MOT_STEP, PIN_MOT_DIR);
 // -----------------------------------------------------------------------------
 // Constantes globales
 #define SECOND 1000
+
+/* enum {
+  ERREUR = -1,   OK = 0,   ABANDON = 1,   
+  ENTREE = 10,   SORTIE = 11, 
+  RETOURNEMENT = 20,   SANSRETOURNEMENT = 21
+}; */
+
 #define ERREUR -1
 #define OK 0      // aussi utiliser pour presence engin sur PT
 #define ABANDON 1
@@ -66,7 +76,7 @@ const int tabVoie[NB_MAX_VOIE + 1] = {
   210, 220, 230, 240, 250, 260, 270, 280, 290, 300,
   310, 320, 330, 340, 350, 360, 370, 380, 390, 400 };
 
-// Definition des voies
+// Definition des voies principales
 const byte voieEntree = 0;
 const byte voieSortie = voieEntree;
 
@@ -92,7 +102,8 @@ void afficherLCD(const String texte, const byte ligne, const bool effacement ) {
   }
 
   effacerLCD(ligne);
-  LCD.setCursor(0, ligne);  LCD.print(texte);
+  LCD.setCursor(0, ligne);  
+  LCD.print(texte);
 }
 
 /* ==================
@@ -129,8 +140,8 @@ void setup() {
    ============================================================== */
 int saisirTypeManoeuvre() {
 
-  int typeManeouvre = ABANDON;
-  char touche = '\0';     // donne automatiquement la valeur ASCII
+  int typeManoeuvre = ABANDON;
+  char touche = '\0'; // initialise avec le caractere ASCCI NULL
   bool entreeValide = false;
 
   // Saisir le type de manoeuvre Entree=A ou Sortie=B
@@ -143,21 +154,21 @@ int saisirTypeManoeuvre() {
   } while (!entreeValide);
 
   if (touche == '#') {
-    typeManeouvre = ABANDON;
+    typeManoeuvre = ABANDON;
     afficherLCD("ABANDON", 3, false);
   }
   else if (touche == 'A') {
-    typeManeouvre = ENTREE;
+    typeManoeuvre = ENTREE;
     afficherLCD("Entree", 0, true);
   }
-  else { // typeManeouvre == SORTIE
-    typeManeouvre = SORTIE;
+  else { // typeManoeuvre == SORTIE
+    typeManoeuvre = SORTIE;
     afficherLCD("Sortie", 0, true);
   }
 
   delay(1*SECOND);
   effacerLCD(3);
-  return typeManeouvre;
+  return typeManoeuvre;
 }
 
 /* ==============================================
@@ -172,7 +183,7 @@ int saisirVoie() {
   afficherLCD("Voie (1-40) ou '*'", 1, false);
   do {
     touche = kp.getKey();
-    entreeValide = ((touche >= '1') && (touche <= '9') /*|| (touche == '*') */ || (touche == '#'));
+    entreeValide = ((touche >= '1') && (touche <= '9') || (touche == '#'));
   } while (!entreeValide);
 
   if (touche == '#') {
@@ -183,7 +194,7 @@ int saisirVoie() {
 
   if ((touche >= '1') && (touche <= '9')) {
     voie = touche - '0';
-    afficherLCD("Voie "  + (String) voie, 3, false);
+    afficherLCD("Voie " + (String) voie, 3, false);
   }
 
   do {
@@ -334,7 +345,7 @@ int deplacerPT(const int voieCible, const int retournement)
   if (voie == voieCourante) {
     //delay(2*SECOND);
     effacerLCD(3);
-    return;
+    return OK;
   }
 
   // Normaliser si necessaire
@@ -371,7 +382,7 @@ void loop() {
   // Saisir le type de manoeuvre Entree ou Sortie
   int typeManoeuvre = saisirTypeManoeuvre();
 
-  switch (typeManoeuvre) {
+  switch (typeManoeuvre) { 
 
     case ABANDON: 
       return;
