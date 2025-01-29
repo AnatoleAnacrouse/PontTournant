@@ -371,7 +371,7 @@ int deplacerPT(const int voieCible, const int retournement)
 
 /* =================
    Boucle principale
-   ================ */
+   ================= */
 void loop() {
 
   int voieSelectionnee = 0;
