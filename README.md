@@ -23,7 +23,7 @@ Cette fonction est appelée systématiquement à l'initialisation du pont.
 
 ## Matériel
 
-Il utilise :    
+Le matériel est constitué de :    
   - un pont tournant JOUEF, 40 voies max, angle de 9° entre chaque voie ;
   - un arduino Uno / Nano ou Mega ;
   - un afficheur LCD 4 x 20 I2C avec SCL sur les broches A5 et SDA sur A4 ;
