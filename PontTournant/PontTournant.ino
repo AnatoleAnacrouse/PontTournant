@@ -1,15 +1,15 @@
-// -----------------------------------------------------------------------------
+// --------------------------------------------------------------------
 //
 // TITRE       : Pont tournant
 // AUTEUR      : M. EPARDEAU et F. FRANKE
-// DATE        : 26/01/2025
+// DATE        : 09/02/2025
 //
-#define VERSION "  VERSION 0.8 "
+#define VERSION "  VERSION 0.9 "
 //
 //DESCRIPTION :
 //
 // Configuration de l'afficheur LCD
-// -----------------------------------------------------------------------------
+// --------------------------------------------------------------------
 //    - AFFICHEUR 4 x 20 I2C
 //       . SCL sur A5
 //       . SDA sur A4
@@ -19,7 +19,7 @@ LiquidCrystal_I2C LCD(0x27, 20, 4);
 //
 //    - PAD 4 * 4 touches
 //      . broches D2 a D9
-// -----------------------------------------------------------------------------
+// --------------------------------------------------------------------
 
 // Configuration du pavé numérique
 #include <Keypad.h>
@@ -31,11 +31,11 @@ const char kpKeys[ROWS][COLS] = {
   {'7', '8', '9', 'C'},
   {'*', '0', '#', 'D'}
 };
-byte rowKpPin [4] = {9, 8, 7, 6};
-byte colKpPin [4] = {5, 4, 3, 2};
+const byte rowKpPin [4] = {9, 8, 7, 6};
+const byte colKpPin [4] = {5, 4, 3, 2};
 Keypad kp = Keypad(makeKeymap(kpKeys), rowKpPin, colKpPin, ROWS, COLS);
 
-// -----------------------------------------------------------------------------
+// --------------------------------------------------------------------
 // Configuration du moteur pas à pas
 //  - Moteur à pas NEMA 14 200 pas/rotation avec reduction 2:1 ()
 //       via A4988 sur les broches D11 (DIR) et D12 (STEP)
@@ -46,7 +46,7 @@ Keypad kp = Keypad(makeKeymap(kpKeys), rowKpPin, colKpPin, ROWS, COLS);
 const int stepsPerRevolution = 400;
 AccelStepper pontTournant(1, PIN_MOT_STEP, PIN_MOT_DIR);
 
-// -----------------------------------------------------------------------------
+// --------------------------------------------------------------------
 // Constantes globales
 #define SECOND 1000
 
@@ -54,7 +54,12 @@ AccelStepper pontTournant(1, PIN_MOT_STEP, PIN_MOT_DIR);
   ERREUR = -1,   OK = 0,   ABANDON = 1,   
   ENTREE = 10,   SORTIE = 11, 
   RETOURNEMENT = 20,   SANSRETOURNEMENT = 21
-}; */
+}; 
+
+enum ActionType { ERREUR = -1, OK = 0, ABANDON = 1, 
+                  ENTREE = 10, SORTIE = 11, 
+                  RETOURNEMENT = 20, SANSRETOURNEMENT = 21 };
+*/
 
 #define ERREUR -1
 #define OK 0      // aussi utiliser pour presence engin sur PT
@@ -64,9 +69,10 @@ AccelStepper pontTournant(1, PIN_MOT_STEP, PIN_MOT_DIR);
 #define RETOURNEMENT 20
 #define SANSRETOURNEMENT 21
 
-// -----------------------------------------------------------------------------
+// --------------------------------------------------------------------
 
 // Configuration du pont
+/* const int NB_MAX_VOIE = 40;*/
 #define NB_MAX_VOIE 40
 // Pour une reduction de 1/2 d'un moteur de 200 pas / rev. il y a 400 pas/rev.
 // pour 40 voies, chaque voie necessite un déplacement de 10 * n
@@ -85,8 +91,7 @@ int voieCourante = voieEntree;
 /* ==========================================
    Procedures d'effacement d'une ligne du LCD
    ========================================== */
-void effacerLCD(const byte ligne)
- {
+void effacerLCD(const byte ligne) {
   LCD.setCursor(0, ligne);
   LCD.print(F("                    "));
 }
@@ -94,39 +99,37 @@ void effacerLCD(const byte ligne)
 /* =================================
    Procedures d'affichage sur le LCD
    ================================= */
-void afficherLCD(const String texte, const byte ligne, const bool effacement ) {
+void afficherLCD(const String &texte, const byte ligne, const bool effacement ) {
   
-  if (effacement)
-  {
+  if (effacement) {
   LCD.clear();
   }
 
   effacerLCD(ligne);
-  LCD.setCursor(0, ligne);  
+  LCD.setCursor(0, ligne);
   LCD.print(texte);
 }
 
-/* ==================
+/* ==========
    Setup
-   =================== */
+   ========== */
 void setup() {
 
   Serial.begin(115200);
 
   // Nombre de lignes et colonnes du LCD
   LCD.begin(0x27, 20, 4);
-  
   LCD.init();
   LCD.backlight();
   LCD.setCursor(0, 0);
+  
+  afficherLCD(VERSION, 0, true);
 
   // Broches moteur
   //pinMode(PIN_MOT_DIR,OUTPUT);
   //pinMode(PIN_MOT_STEP,OUTPUT);
   pontTournant.setMaxSpeed(1000);
   pontTournant.setAcceleration(100);
-
-  afficherLCD(VERSION, 0, true);
 
   // --------------------------------------------------
   // CALIBRATION => se positionner sur la voie d'entrée
@@ -137,7 +140,7 @@ void setup() {
 
 /* ===============================================================
    Saisie sur le PAD du type de manoeuvre ENTREE (A) ou SORTIE (B)
-   ============================================================== */
+   =============================================================== */
 int saisirTypeManoeuvre() {
 
   int typeManoeuvre = ABANDON;
@@ -224,7 +227,6 @@ int saisirVoie() {
         afficherLCD("Au dessus de 40", 3, false);
         delay(1*SECOND);
         return ERREUR;
-        
       }
       else {
         afficherLCD("Voie (1-40) ou '*'", 3, false);
@@ -245,8 +247,7 @@ int saisirVoie() {
 /* ======================
    Saisir le retournement
    ====================== */
-int saisirRetournement()
-{
+int saisirRetournement() {
 
   bool retournement = false;
   char touche = '\0';
@@ -273,19 +274,19 @@ int saisirRetournement()
     effacerLCD(3);
     return RETOURNEMENT;
   }
-    
   else
   {
     afficherLCD("Pas de retournement", 2, false);
     effacerLCD(3);
     return SANSRETOURNEMENT;
   }
+
   delay(1*SECOND);
 }
 
 /* ==========================================================
    Saisir sur le PAD entree/sortie loco sur PT par touche '*'
-   ========================================================= */
+   ========================================================== */
 int attendreDeplacementEngin() {
 
   char touche = '\0';     // donne automatiquement la valeur ASCII
@@ -328,10 +329,9 @@ int calculerPlusCourtChemin(int currentPos, int targetPos) {
 
 /* ==================================================
    Deplacer le PT de la voie actuelle à la voie cible
-   ================================================ */
+   ================================================== */
 
-int deplacerPT(const int voieCible, const int retournement)
- {
+int deplacerPT(const int voieCible, const int retournement) {
   int voie = voieCible;
 
   afficherLCD("En rotation", 3, false);
@@ -343,7 +343,6 @@ int deplacerPT(const int voieCible, const int retournement)
 
   // Si on est deja sur la voie  alors ne rien faire
   if (voie == voieCourante) {
-    //delay(2*SECOND);
     effacerLCD(3);
     return OK;
   }
@@ -361,11 +360,8 @@ int deplacerPT(const int voieCible, const int retournement)
   pontTournant.moveTo(pontTournant.currentPosition() + distance);
   pontTournant.runToPosition();
 
-  //delay(2*SECOND);
   effacerLCD(3);
-
   voieCourante = voie;
-
   return OK;
 }
 
@@ -437,7 +433,7 @@ void loop() {
       break;
   }
 
-  // Liberer le pont avant prochaine manoeuvre
+  // Liberer le pont avant la prochaine manoeuvre
     attendreDeplacementEngin();
 }
 
