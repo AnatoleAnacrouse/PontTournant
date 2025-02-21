@@ -4,7 +4,7 @@
 // AUTEUR      : M. EPARDEAU et F. FRANKE
 // DATE        : 09/02/2025
 //
-#define VERSION "  VERSION 0.9 "
+#define VERSION "  VERSION 0.9"
 //
 //DESCRIPTION :
 //
