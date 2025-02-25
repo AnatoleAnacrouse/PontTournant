@@ -7,30 +7,32 @@
     {
       "type": "wokwi-lcd2004",
       "id": "lcd1",
-      "top": -694.4,
-      "left": -215.2,
+      "top": -675.2,
+      "left": -234.4,
       "attrs": { "pins": "i2c" }
     },
     {
       "type": "wokwi-membrane-keypad",
       "id": "keypad1",
-      "top": -462.8,
+      "top": -472.4,
       "left": -205.6,
-      "attrs": {}
+      "attrs": {
+        "keys": [ "1", "2", "3", "A", "4", "5", "6", "B", "7", "8", "9", "C", "*", "0", "#", "D" ]
+      }
     },
     {
       "type": "wokwi-stepper-motor",
       "id": "stepper1",
       "top": -420.76,
-      "left": 263.45,
+      "left": 225.05,
       "attrs": { "size": "14", "display": "steps", "gearRatio": "2:1", "arrow": "orange" }
     },
-    { "type": "wokwi-a4988", "id": "drv1", "top": 24, "left": 216, "attrs": {} }
+    { "type": "wokwi-a4988", "id": "drv1", "top": 24, "left": 177.6, "attrs": {} }
   ],
   "connections": [
-    [ "lcd1:VCC", "uno:5V", "red", [ "h-115.2", "v912.1", "h217" ] ],
-    [ "lcd1:SDA", "uno:A4", "orange", [ "h-28.8", "v144.2", "h345.6", "v710.4", "h-129" ] ],
-    [ "lcd1:SCL", "uno:A5", "gold", [ "h-38.4", "v144.3", "h345.6", "v691.2", "h-109.9" ] ],
+    [ "lcd1:VCC", "uno:5V", "red", [ "h-76.8", "v844.9", "h197.8" ] ],
+    [ "lcd1:SDA", "uno:A4", "orange", [ "h-28.8", "v144.2", "h345.6", "v700.8", "h-109.8" ] ],
+    [ "lcd1:SCL", "uno:A5", "gold", [ "h-38.4", "v144.3", "h345.6", "v681.6", "h-90.7" ] ],
     [ "keypad1:R2", "uno:8", "magenta", [ "v67.2", "h-221.6" ] ],
     [ "keypad1:R1", "uno:9", "purple", [ "v76.8", "h-221.6" ] ],
     [ "keypad1:R3", "uno:7", "limegreen", [ "v86.4", "h-215.1" ] ],
@@ -39,16 +41,16 @@
     [ "keypad1:C2", "uno:4", "cyan", [ "v115.2", "h-215.1" ] ],
     [ "keypad1:C3", "uno:3", "violet", [ "v124.8", "h-215.35" ] ],
     [ "keypad1:C4", "uno:2", "blue", [ "v134.4", "h-215.6" ] ],
-    [ "drv1:GND.1", "uno:GND.2", "blue", [ "v201.68", "h-483.75" ] ],
-    [ "lcd1:GND", "uno:GND.2", "blue", [ "h-134.4", "v960", "h245.7" ] ],
-    [ "uno:5V", "drv1:VDD", "red", [ "v76.7", "h522.2", "v-172.88" ] ],
+    [ "drv1:GND.1", "uno:GND.2", "blue", [ "h9.75", "v124.88", "h-378.3" ] ],
+    [ "lcd1:GND", "uno:GND.2", "blue", [ "h-86.4", "v864", "h216.9" ] ],
+    [ "uno:5V", "drv1:VDD", "red", [ "v28.7", "h359", "v-124.88" ] ],
     [ "drv1:SLEEP", "drv1:RESET", "magenta", [ "h-19.2", "v-9.6" ] ],
     [ "drv1:1B", "stepper1:B-", "green", [ "h76.95", "v-153.52", "h-76.79" ] ],
     [ "drv1:1A", "stepper1:B+", "green", [ "h67.35", "v-134.32", "h-76.79" ] ],
     [ "drv1:2A", "stepper1:A+", "green", [ "h57.75", "v-115.12", "h-76.8" ] ],
     [ "drv1:2B", "stepper1:A-", "green", [ "h48.15", "v-95.92", "h-76.8" ] ],
-    [ "drv1:GND.2", "uno:GND.3", "blue", [ "h19.35", "v-38.32", "h-105.9", "v297.6", "h-387.7" ] ],
-    [ "drv1:VMOT", "uno:5V", "red", [ "h0.15", "v-38.32", "h-96", "v268.8", "h-282.2" ] ],
+    [ "drv1:GND.2", "uno:GND.3", "blue", [ "h19.35", "v-38.32", "h-105.9", "v220.8", "h-272.5" ] ],
+    [ "drv1:VMOT", "uno:5V", "red", [ "h0.15", "v-38.32", "h-96", "v220.8", "h-282.2" ] ],
     [ "drv1:DIR", "uno:11", "cyan", [ "v0", "h-461.4" ] ],
     [ "drv1:STEP", "uno:12", "yellow", [ "h-307.2", "v0", "h-192.5" ] ]
   ],
