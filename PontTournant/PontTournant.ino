@@ -39,7 +39,6 @@ Keypad kp = Keypad(makeKeymap(kpKeys), rowKpPin, colKpPin, ROWS, COLS);
 // Configuration du moteur pas à pas
 //  - Moteur à pas NEMA 14 200 pas/rotation avec reduction 2:1 ()
 //       via A4988 sur les broches D11 (DIR) et D12 (STEP)
-
 #include <AccelStepper.h>
 #define PIN_MOT_STEP 12
 #define PIN_MOT_DIR 11
@@ -62,7 +61,7 @@ enum ActionType { ERREUR = -1, OK = 0, ABANDON = 1,
 */
 
 #define ERREUR -1
-#define OK 0      // aussi utiliser pour presence engin sur PT
+#define OK 0      // aussi utilise pour presence engin sur PT
 #define ABANDON 1
 #define ENTREE 10
 #define SORTIE 11
@@ -99,7 +98,7 @@ void effacerLCD(const byte ligne) {
 /* =================================
    Procedures d'affichage sur le LCD
    ================================= */
-void afficherLCD(const String &texte, const byte ligne, const bool effacement ) {
+void afficherLCD(const String &texte, const byte ligne, const bool effacement) {
   
   if (effacement) {
   LCD.clear();
@@ -153,7 +152,7 @@ int saisirTypeManoeuvre() {
   do {
     touche = kp.getKey();
     entreeValide = (touche == 'A' || touche == 'B' || touche == '#');
-    if (!entreeValide) ; // tone(PIN_BUZZER, 220, 1/2*SECOND);
+    // if (!entreeValide) tone(PIN_BUZZER, 220, 1/2*SECOND);
   } while (!entreeValide);
 
   if (touche == '#') {
@@ -171,6 +170,7 @@ int saisirTypeManoeuvre() {
 
   delay(1*SECOND);
   effacerLCD(3);
+
   return typeManoeuvre;
 }
 
@@ -390,6 +390,7 @@ void loop() {
         deplacerPT(voieEntree, false);
         attendreDeplacementEngin();
       }
+
       voieSelectionnee = saisirVoie();
       if (voieSelectionnee == ABANDON) {
         return;
@@ -399,10 +400,12 @@ void loop() {
         delay (1*SECOND);
         return;
       }
+
       retournementChoisi = saisirRetournement();
       if (retournementChoisi == ABANDON) {
         return;
       }
+
       deplacerPT(voieSelectionnee, retournementChoisi);
     break;
 
@@ -417,8 +420,10 @@ void loop() {
         delay (1*SECOND);
         return;
       }
+
       deplacerPT(voieSelectionnee, false);
       attendreDeplacementEngin();
+
       retournementChoisi = saisirRetournement();
       if (retournementChoisi == ABANDON) {
         return;
@@ -436,4 +441,3 @@ void loop() {
   // Liberer le pont avant la prochaine manoeuvre
     attendreDeplacementEngin();
 }
-
