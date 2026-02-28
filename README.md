@@ -49,20 +49,20 @@ Pour dépasser cette limite, plusieurs modifications logicielles et matérielles
 Ce mode est utilisé pour amener une locomotive de la voie principale vers l'une des 40 voies de garage.
 
 La séquence est la suivante :
-Positionnement initial : Si le pont n'y est pas déjà, il se déplace automatiquement vers la voie d'entrée (définie comme la voie 0).
-Embarquement : Le système attend que l'utilisateur confirme que la locomotive est montée sur le pont (touche \*).
-Destination : L'utilisateur saisit le numéro de la voie de garage (1 à 40) où il souhaite envoyer la locomotive.
-Mouvement final : Le pont se déplace vers la voie sélectionnée, avec ou sans retournement de 180° selon le choix de l'utilisateur.
+* Positionnement initial : Si le pont n'y est pas déjà, il se déplace automatiquement vers la voie d'entrée (définie comme la voie 0).
+* Embarquement : Le système attend que l'utilisateur confirme que la locomotive est montée sur le pont (touche \*).
+* Destination : L'utilisateur saisit le numéro de la voie de garage (1 à 40) où il souhaite envoyer la locomotive.
+* Mouvement final : Le pont se déplace vers la voie sélectionnée, avec ou sans retournement de 180° selon le choix de l'utilisateur.
 
 ### Mode Sortie (Manœuvre vers la voie principale)
 
 Ce mode est utilisé pour sortir une locomotive d'une voie de garage afin de la ramener sur le réseau.
 
 La séquence est inversée :
-Positionnement initial : L'utilisateur doit d'abord saisir le numéro de la voie où se trouve la locomotive. Le pont se déplace alors vers cette voie.
-Embarquement : Le système attend que la locomotive monte sur le pont (confirmé par la touche \*).
-Destination : Le système sait que la destination est la voie d'entrée (voie 0).
-Mouvement final : Le pont retourne à la voie d'entrée, en effectuant ou non un retournement selon la demande.
+* Positionnement initial : L'utilisateur doit d'abord saisir le numéro de la voie où se trouve la locomotive. Le pont se déplace alors vers cette voie.
+* Embarquement : Le système attend que la locomotive monte sur le pont (confirmé par la touche \*).
+* Destination : Le système sait que la destination est la voie d'entrée (voie 0).
+* Mouvement final : Le pont retourne à la voie d'entrée, en effectuant ou non un retournement selon la demande.
 
 Résumé des différences :
 
@@ -101,25 +101,25 @@ Le code utilise une fonction nommée `calculerPlusCourtChemin()` pour évaluer d
 
 Voici comment fonctionne cette optimisation :
 
-&nbsp;  calculer la distance (différence de pas) entre la positionActuelle et la positionCible
+>  calculer la distance (différence de pas) entre la positionActuelle et la positionCible
 
 
-&nbsp;  SI la distance dépasse un demi-tour ALORS
+>  SI la distance dépasse un demi-tour ALORS
 
-&nbsp;     SI la distance est positive ALORS 
+>>     SI la distance est positive ALORS 
 
-&nbsp;         soustraire un tour complet
+>>>        soustraire un tour complet
 
-&nbsp;     SINON (la distance est négative) ALORS 
+>>   SINON (la distance est négative) ALORS 
 
-&nbsp;         ajouter un tour complet
+>>>        ajouter un tour complet
 
-&nbsp;     FIN SI
+>>     FIN SI
 
-&nbsp; FIN SI
+> FIN SI
 
 
-&nbsp; Retourner la distance optimisée (positive ou négative)
+> Retourner la distance optimisée (positive ou négative)
 
 
 Exemple concret :
