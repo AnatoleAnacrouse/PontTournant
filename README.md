@@ -97,7 +97,7 @@ Le code utilise une fonction nommée `calculerPlusCourtChemin()` pour évaluer d
 
 Voici comment fonctionne cette optimisation :
 
-‎```C++
+‎```
   calculer la distance (différence de pas) entre la positionActuelle et la positionCible
 
   SI la distance dépasse un demi-tour ALORS
