@@ -8,20 +8,24 @@
 //
 //DESCRIPTION :
 //
-// Configuration de l'afficheur LCD
 // --------------------------------------------------------------------
+//
+// Configuration de l'afficheur LCD
 //    - AFFICHEUR 4 x 20 I2C
 //       . SCL sur A5
 //       . SDA sur A4
 //
+// Bibliothèque pour l'écran LCD I2C
 #include <LiquidCrystal_I2C.h>
+// Initialisation de l'écran LCD : adresse 0x27, 20 colonnes, 4 lignes
 LiquidCrystal_I2C LCD(0x27, 20, 4);
 //
 //    - PAD 4 * 4 touches
 //      . broches D2 a D9
+//
 // --------------------------------------------------------------------
-
 // Configuration du pavé numérique
+//
 #include <Keypad.h>
 #define ROWS 4
 #define COLS 4
@@ -31,23 +35,37 @@ const char kpKeys[ROWS][COLS] = {
   {'7', '8', '9', 'C'},
   {'*', '0', '#', 'D'}
 };
+
+// Broches Arduino connectées aux lignes du clavier (9, 8, 7, 6)
 const byte rowKpPin [4] = {9, 8, 7, 6};
+// Broches Arduino connectées aux colonnes du clavier (5, 4, 3, 2)
 const byte colKpPin [4] = {5, 4, 3, 2};
+// Initialisation du clavier avec la configuration définie
 Keypad kp = Keypad(makeKeymap(kpKeys), rowKpPin, colKpPin, ROWS, COLS);
 
 // --------------------------------------------------------------------
 // Configuration du moteur pas à pas
+//
 //  - Moteur à pas NEMA 14 200 pas/rotation avec reduction 2:1 ()
 //       via A4988 sur les broches D11 (DIR) et D12 (STEP)
-
 #include <AccelStepper.h>
+// Broche Arduino pour le signal STEP (impulsions)
 #define PIN_MOT_STEP 12
+// Broche Arduino pour le signal DIR (direction)
 #define PIN_MOT_DIR 11
+// Nombre de pas pour une rotation complète (200 pas * réduction 2:1)
 const int stepsPerRevolution = 400;
+//
+// Instanciation du pont tournant avec la librairie AccelStepper
+// Cette librairie  elle permet de définir une vitesse maximale (setMaxSpeed) 
+// et une accélération (setAcceleration), 
+//ce qui assure des démarrages et des arrêts progressifs pour le pont tournant
 AccelStepper pontTournant(1, PIN_MOT_STEP, PIN_MOT_DIR);
 
 // --------------------------------------------------------------------
 // Constantes globales
+//
+// Une seconde = 1000 millisecondes
 #define SECOND 1000
 
 /* enum {
@@ -61,8 +79,9 @@ enum ActionType { ERREUR = -1, OK = 0, ABANDON = 1,
                   RETOURNEMENT = 20, SANSRETOURNEMENT = 21 };
 */
 
+// Constante utiles à la saisie des commandes
 #define ERREUR -1
-#define OK 0      // aussi utiliser pour presence engin sur PT
+#define OK 0      // aussi utilise pour presence engin sur PT
 #define ABANDON 1
 #define ENTREE 10
 #define SORTIE 11
@@ -70,12 +89,15 @@ enum ActionType { ERREUR = -1, OK = 0, ABANDON = 1,
 #define SANSRETOURNEMENT 21
 
 // --------------------------------------------------------------------
-
-// Configuration du pont
+// Configuration du pont tournant
+//
+// Nombre maximum de voies disponibles
 /* const int NB_MAX_VOIE = 40;*/
 #define NB_MAX_VOIE 40
-// Pour une reduction de 1/2 d'un moteur de 200 pas / rev. il y a 400 pas/rev.
-// pour 40 voies, chaque voie necessite un déplacement de 10 * n
+
+// Tableau des positions en pas pour chaque voie (0 à 40)
+// Pour un moteur à 200 pas/rev. et une reduction de 1/2, il y a au total 400 pas/rev.
+// Avec 400 pas/révolution et 40 voies : chaque voie = 10 pas
 const int tabVoie[NB_MAX_VOIE + 1] = {
   0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100,
   110, 120, 130, 140, 150, 160, 170, 180, 190, 200,
@@ -86,6 +108,7 @@ const int tabVoie[NB_MAX_VOIE + 1] = {
 const byte voieEntree = 0;
 const byte voieSortie = voieEntree;
 
+// Au démarrage, la voie courante est la voie d'entree
 int voieCourante = voieEntree;
 
 /* ==========================================
@@ -96,10 +119,10 @@ void effacerLCD(const byte ligne) {
   LCD.print(F("                    "));
 }
 
-/* =================================
+/* ==========================================
    Procedures d'affichage sur le LCD
-   ================================= */
-void afficherLCD(const String &texte, const byte ligne, const bool effacement ) {
+   ========================================== */
+void afficherLCD(const String &texte, const byte ligne, const bool effacement) {
   
   if (effacement) {
   LCD.clear();
@@ -110,9 +133,9 @@ void afficherLCD(const String &texte, const byte ligne, const bool effacement ) 
   LCD.print(texte);
 }
 
-/* ==========
+/* ==========================================
    Setup
-   ========== */
+   ========================================== */
 void setup() {
 
   Serial.begin(115200);
@@ -132,7 +155,7 @@ void setup() {
   pontTournant.setAcceleration(100);
 
   // --------------------------------------------------
-  // CALIBRATION => se positionner sur la voie d'entrée
+  // INSERER ICI LA PROCEDURE DE CALIBRATION => se positionner sur la voie d'entrée
   // --------------------------------------------------
 
   delay(1*SECOND);
@@ -140,6 +163,18 @@ void setup() {
 
 /* ===============================================================
    Saisie sur le PAD du type de manoeuvre ENTREE (A) ou SORTIE (B)
+   
+   Afficher "E (A) ou S (B)?"
+   
+   Répéter jusqu’à ce qu’une touche valide soit pressee ('A', 'B', ou '#')
+      Si '#' alors retourner ABANDON
+      Si 'A' alors retourner ENTREE
+      Si 'B' alors retourner SORTIE
+      
+   Afficher le choix sur l’écran
+   Attendre 1 seconde
+   Effacer la ligne 4
+   
    =============================================================== */
 int saisirTypeManoeuvre() {
 
@@ -153,7 +188,7 @@ int saisirTypeManoeuvre() {
   do {
     touche = kp.getKey();
     entreeValide = (touche == 'A' || touche == 'B' || touche == '#');
-    if (!entreeValide) ; // tone(PIN_BUZZER, 220, 1/2*SECOND);
+    // if (!entreeValide) tone(PIN_BUZZER, 220, 1/2*SECOND);
   } while (!entreeValide);
 
   if (touche == '#') {
@@ -171,16 +206,31 @@ int saisirTypeManoeuvre() {
 
   delay(1*SECOND);
   effacerLCD(3);
+
   return typeManoeuvre;
 }
 
 /* ==============================================
    Saisir sur le PAD de la voie (1 à NB_MAX_VOIE)
+   
+   Afficher "Voie (1-40) ou '*'"
+   
+   Lire la première touche (1-9 ou #)
+      Si '#' alors retourner ABANDON
+      Sinon convertir le char en int dans 'voie'
+      
+   Lire la deuxième touche (0-9, '*', ou #)
+      Si '#' alors retourner ABANDON
+      Si '*' alors retourner la voie actuelle
+      Si chiffre alors calculer voie = voie * 10 + chiffre
+         Si voie > 40 alors retourner ERREUR
+         Sinon afficher la voie et retourner la valeur
+   
    ============================================== */
 int saisirVoie() {
 
   int voie = 0;
-  char touche = '\0';
+  char touche = '\0'; // initialise avec le caractere ASCCI NULL
   bool entreeValide = false;
 
   afficherLCD("Voie (1-40) ou '*'", 1, false);
@@ -218,6 +268,7 @@ int saisirVoie() {
     return voie;
   }
 
+  // il ne peut pas y avoir plus de 40 voies
   else if (voie < 5)
    {
     if ((touche >= '0') && (touche <= '9')) {
@@ -246,11 +297,21 @@ int saisirVoie() {
 
 /* ======================
    Saisir le retournement
+   
+   Afficher "Ret. O(C) / N(D)?"
+   
+   Répéter jusqu’à ce qu’une touche valide soit pressée ('C', 'D', ou '#')
+     Si '#' alors retourner ABANDON
+     Si 'C' alors retourner RETOURNEMENT
+     Si 'D' alors retourner SANSRETOURNEMENT
+     
+  Afficher le choix sur l’écran
+
    ====================== */
 int saisirRetournement() {
 
   bool retournement = false;
-  char touche = '\0';
+  char touche = '\0'; // initialise avec le caractere ASCCI NULL
   bool entreeValide = false;
 
   afficherLCD("Ret. O(C) / N(D)? ", 2, false);
@@ -286,6 +347,13 @@ int saisirRetournement() {
 
 /* ==========================================================
    Saisir sur le PAD entree/sortie loco sur PT par touche '*'
+   
+   Afficher "Loco deplacee? oui=*"
+   Attendre que l’utilisateur appuie sur '*'
+   
+   Effacer la ligne d’affichage
+   Retourner OK
+
    ========================================================== */
 int attendreDeplacementEngin() {
 
@@ -329,6 +397,20 @@ int calculerPlusCourtChemin(int currentPos, int targetPos) {
 
 /* ==================================================
    Deplacer le PT de la voie actuelle à la voie cible
+   
+   Afficher "En rotation"
+   Si retournement demandé alors calculer la voie opposée : voie = (20 + voie) % 40
+   Si déjà sur la voie alors retourner OK
+   
+   Normaliser la position actuelle si > 400 pas
+   
+   Calculer la distance optimale avec calculerPlusCourtChemin()
+   Déplacer le moteur à la position cible
+   Mettre à jour la voie courante
+   
+   Effacer le message "En rotation"
+   Retourner OK
+   
    ================================================== */
 
 int deplacerPT(const int voieCible, const int retournement) {
@@ -390,6 +472,7 @@ void loop() {
         deplacerPT(voieEntree, false);
         attendreDeplacementEngin();
       }
+
       voieSelectionnee = saisirVoie();
       if (voieSelectionnee == ABANDON) {
         return;
@@ -399,10 +482,12 @@ void loop() {
         delay (1*SECOND);
         return;
       }
+
       retournementChoisi = saisirRetournement();
       if (retournementChoisi == ABANDON) {
         return;
       }
+
       deplacerPT(voieSelectionnee, retournementChoisi);
     break;
 
@@ -417,8 +502,10 @@ void loop() {
         delay (1*SECOND);
         return;
       }
+
       deplacerPT(voieSelectionnee, false);
       attendreDeplacementEngin();
+
       retournementChoisi = saisirRetournement();
       if (retournementChoisi == ABANDON) {
         return;
@@ -436,4 +523,3 @@ void loop() {
   // Liberer le pont avant la prochaine manoeuvre
     attendreDeplacementEngin();
 }
-

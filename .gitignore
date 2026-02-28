@@ -36,3 +36,13 @@
 ehthumbs.db
 Thumbs.db
 *.pptx
+
+# Miscellaneous files #
+#######################
+*.pptx
+*.pdf
+*.txt
+
+# Dossier #
+###########
+ARCHIVES/
