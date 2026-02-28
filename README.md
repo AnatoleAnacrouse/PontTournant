@@ -97,6 +97,7 @@ Le code utilise une fonction nommée `calculerPlusCourtChemin()` pour évaluer d
 
 Voici comment fonctionne cette optimisation :
 
+```
   calculer la distance (différence de pas) entre la positionActuelle et la positionCible \
  \
   SI la distance dépasse un demi-tour ALORS \
@@ -109,6 +110,7 @@ Voici comment fonctionne cette optimisation :
  \
  Retourner la distance optimisée (positive ou négative) \
  \
+```
 
 Exemple concret :
 Si le pont est à la position 10 pas et doit aller à la position 350 pas :
