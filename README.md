@@ -25,7 +25,7 @@ Le pont n’est pas symétrique du fait de la présence de la cabine de pilotage
 L’entrée de la locomotive sur le pont se fait toujours à l’opposé de la cabine.
 De ce fait, il doit être possible de retourner la locomotive lors d'une manoeuvre.
 
-Pour atteindre la voie choisie, le trajet du pont doit être optimisé en choisisant le chemin le plus court dans le sens des aiguilles d'une montre ou le sens inverse.
+Pour atteindre la voie choisie, le trajet du pont doit être optimisé en choisissant le chemin le plus court dans le sens des aiguilles d'une montre ou le sens inverse.
 
 Une locomotive à vapeur est toujours garée, dans une voie couverte, cheminée vers le pont tournant (garée *tender en arrière* sur sa voie de garage couverte).
 
@@ -38,7 +38,7 @@ Actuellement, le logiciel est configuré pour un 40 voies.
 
 Pour dépasser cette limite, plusieurs modifications logicielles et matérielles seraient nécessaires :
 
-1. Le code définit la constante `NB\\\\\\\_MAX\\\\\\\_VOIE` à 40.
+1. Le code définit la constante `NB_MAX_VOIE` à 40.
 2. La fonction de saisie des voies indique explicitement qu'il « ne peut pas y avoir plus de 40 voies » et rejette toute saisie supérieure à ce nombre avec un message d'erreur.
 3. Le système utilise un moteur pas à pas avec une réduction aboutissant à 400 pas par révolution. Avec 40 voies, chaque voie est espacée exactement de 10 pas (400 / 40 = 10). Pour 80 voies, l'écart ne serait plus que de 5 pas entre chaque voie. Et le moteur utilisé ne pourrait positionner plus de 400 voies. Pour gérer un nombre différents de 40 voies, il faudrait modifier : a) le tableau nommé `tabVoie` ; b) les Les messages affichés sur l'écran LCD (comme "Voie (1-40)") ; c) la logique de saisie du clavier dans la fonction  saisirVoie().
 
@@ -66,15 +66,11 @@ La séquence est inversée :
 
 Résumé des différences :
 
-+---------------------+---------------------------+----------------------------+
 |  Caractéristique    |  Mode Entrée (A)          |  Mode Sortie (B)           |
-+---------------------+---------------------------+----------------------------+
+|---                  |---                        |---
 |  Point de départ    |  Voie d'entrée (0)        |  Voie sélectionnée (1-40)  |
-+-------------------------------------------------+----------------------------+
 |  Point d'arrivée    |  Voie sélectionnée (1-40) |  Voie d'entrée (0)         |
-+---------------------+---------------------------+----------------------------+
 |  Saisie de voie     |  Après l'embarquement     |  Avant l'embarquement      |
-+---------------------+---------------------------+----------------------------+
 
 Dans les deux cas, le logiciel propose à l'utilisateur de choisir si un retournement (pivotement de 180°) est nécessaire avant d'atteindre la destination finale
 
