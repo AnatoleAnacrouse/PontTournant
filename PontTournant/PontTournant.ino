@@ -4,7 +4,7 @@
 // AUTEUR      : M. EPARDEAU et F. FRANKE
 // DATE        : 09/02/2025
 //
-#define VERSION "  VERSION 0.9"
+#define VERSION "  VERSION 1.0"
 //
 //DESCRIPTION :
 //
@@ -58,8 +58,8 @@ const int stepsPerRevolution = 400;
 //
 // Instanciation du pont tournant avec la librairie AccelStepper
 // Cette librairie  elle permet de définir une vitesse maximale (setMaxSpeed) 
-// et une accélération (setAcceleration), 
-//ce qui assure des démarrages et des arrêts progressifs pour le pont tournant
+// et une accélération (setAcceleration), ce qui assure des démarrages 
+// et des arrêts progressifs pour le pont tournant
 AccelStepper pontTournant(1, PIN_MOT_STEP, PIN_MOT_DIR);
 
 // --------------------------------------------------------------------
@@ -81,7 +81,7 @@ enum ActionType { ERREUR = -1, OK = 0, ABANDON = 1,
 
 // Constante utiles à la saisie des commandes
 #define ERREUR -1
-#define OK 0      // aussi utilise pour presence engin sur PT
+#define OK 0      // et pour presence engin sur PT
 #define ABANDON 1
 #define ENTREE 10
 #define SORTIE 11

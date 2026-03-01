@@ -108,10 +108,10 @@ Voici comment fonctionne cette optimisation :
      FIN SI
  FIN SI
  
- Retourner la distance optimisée (positive ou négative) \
+ Retourner la distance optimisée (positive ou négative)
 ```
 
-Exemple concret :\
+**Exemple concret**
 
 si le pont est à la position 10 pas et doit aller à la position 350 pas :
 
