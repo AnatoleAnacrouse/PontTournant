@@ -1,8 +1,8 @@
-# PontTournant
+# Projet de pont tournant ferroviaire
 
 ## Description
 
-Ce projet permet de gérer un pont *tournant ferroviaire* avec un **Arduino**.
+Ce projet permet de gérer un pont **tournant ferroviaire** avec un **Arduino**.
 
 Le pont tournant permet de faire pivoter une voie pour aligner une locomotive avec une voie (entrée et/ou sortie) et une voie de garage).
 
@@ -11,11 +11,11 @@ Le pont tournant permet de faire pivoter une voie pour aligner une locomotive av
 Le matériel est constitué de :
 
 * un pont tournant JOUEF, 40 voies max, angle de 9° entre chaque voie ;
-* un arduino Uno / Nano ou Mega ;
+* un Arduino Uno / Nano ou Mega ;
 * un afficheur LCD 4 x 20 I2C avec SCL sur les broches A5 et SDA sur A4 ;
 * PAD 4 x 4 touches sur les broches D2 a D9 ;
 * un capteur Hall et un aimant pour le *homing* ;
-* un moteur à pas NEMA 14 à 200 pas/rotation avec reduction 8:1 via A4988 sur les broches D11 (DIR) et D12 (STEP) et mise en oeuve avec la librairie AccelStepper()
+* un moteur à pas NEMA 14 à 200 pas/rotation avec reduction 8:1 via A4988 sur les broches D11 (DIR) et D12 (STEP) et mise en œuvre avec la librairie AccelStepper()
 
 ## Exigences et contraintes
 
@@ -40,7 +40,7 @@ Pour dépasser cette limite, plusieurs modifications logicielles et matérielles
 
 1. Le code définit la constante `NB_MAX_VOIE` à 40.
 2. La fonction de saisie des voies indique explicitement qu'il « ne peut pas y avoir plus de 40 voies » et rejette toute saisie supérieure à ce nombre avec un message d'erreur.
-3. Le système utilise un moteur pas à pas avec une réduction aboutissant à 400 pas par révolution. Avec 40 voies, chaque voie est espacée exactement de 10 pas (400 / 40 = 10). Pour 80 voies, l'écart ne serait plus que de 5 pas entre chaque voie. Et le moteur utilisé ne pourrait positionner plus de 400 voies. Pour gérer un nombre différents de 40 voies, il faudrait modifier : a) le tableau nommé `tabVoie` ; b) les Les messages affichés sur l'écran LCD (comme "Voie (1-40)") ; c) la logique de saisie du clavier dans la fonction  saisirVoie().
+3. Le système utilise un moteur pas à pas avec une réduction aboutissant à 400 pas par révolution. Avec 40 voies, chaque voie est espacée exactement de 10 pas (400 / 40 = 10). Pour 80 voies, l'écart ne serait plus que de 5 pas entre chaque voie. Et le moteur utilisé ne pourrait positionner plus de 400 voies. Pour gérer un nombre différents de 40 voies, il faudrait modifier : a) le tableau nommé `tabVoie[]` ; b) les messages affichés sur l'écran LCD (comme "Voie (1-40)") ; c) la logique de saisie du clavier dans la fonction `saisirVoie()`.
 
 ## Logique de fonctionnement du pont tournant
 
@@ -72,23 +72,23 @@ Résumé des différences :
 |  Point d'arrivée    |  Voie sélectionnée (1-40) |  Voie d'entrée (0)         |
 |  Saisie de voie     |  Après l'embarquement     |  Avant l'embarquement      |
 
-Dans les deux cas, le logiciel propose à l'utilisateur de choisir si un retournement (pivotement de 180°) est nécessaire avant d'atteindre la destination finale
+Dans les deux cas, le logiciel propose à l'utilisateur de choisir si un retournement (pivotement de 180°) est nécessaire avant d'atteindre la destination finale.
 
 ## Protocoles de Manœuvre et Interface Utilisateur
 
 L'interface utilisateur permet de piloter le pont via des commandes spécifiques sur le pavé numérique.
 
 Le système distingue deux types de manœuvre :
-   1. Touche 'A' pour une entrée : le pont se positionne d'abord sur la voie d'entrée (voie 0) pour recevoir une locomotive, puis se déplace vers la voie de destination choisie.
+   1. Touche 'A' pour une entrée : le pont se positionne d'abord sur la voie d'entrée (voie 0) pour recevoir une locomotive, puis se déplace vers la voie de destination choisie ;
    2. Touche 'B' pour une sortie : le pont se déplace vers une voie sélectionnée pour récupérer une locomotive, puis revient à la voie d'entrée/sortie.
 
 Pour choisir la voie, l'utilisateur doit saisir un numéro entre 1 et 40.
 
 Si un retournement de la locomotive est nécessaire, l'utilisateur doit presser :
-  1. Touche 'C' : Retournement (Oui).
-  2. Touche 'D' : Sans retournement (Non).
+  1. Touche 'C' : retournement ;
+  2. Touche 'D' : sans retournement.
 
-Annulation : La touche # permet d'abandonner la manœuvre en cours à tout moment.
+Annulation : La touche \# permet d'abandonner la manœuvre en cours à tout moment.
 
 
 ## Optimisation du déplacement du pont tournant
@@ -98,7 +98,7 @@ Le code utilise une fonction nommée `calculerPlusCourtChemin()` pour évaluer d
 Voici comment fonctionne cette optimisation :
 
 ```
-  calculer la distance (différence de pas) entre la positionActuelle et la positionCible
+  calculer la distance (différence de pas) entre la position actuelle et la position cible
 
   SI la distance dépasse un demi-tour ALORS
      SI la distance est positive ALORS
@@ -111,8 +111,9 @@ Voici comment fonctionne cette optimisation :
  Retourner la distance optimisée (positive ou négative) \
 ```
 
-Exemple concret :
-Si le pont est à la position 10 pas et doit aller à la position 350 pas :
+Exemple concret :\
+
+si le pont est à la position 10 pas et doit aller à la position 350 pas :
 
 * La distance directe est de +340 pas.
 * Comme 340 est supérieur à 200, le code calcule : 340 - 400 = **-60 pas**.
@@ -122,7 +123,7 @@ Si le pont est à la position 10 pas et doit aller à la position 350 pas :
 
 En cas de dépassement du nombre de pas pour une révolution complète (compte tenu de la réduction, dans notre cas 400 pas, l'opérateur modulo (%) est appliquée dans la fonction de déplacement `deplacerPT()`.
 
-Cette nouvelle valeur "normalisée" est alors définie comme la position courante du moteur via la commande setCurrentPosition(position).
+Cette nouvelle valeur "normalisée" est alors définie comme la position courante du moteur via la commande `setCurrentPosition(position)`.
 
 Cette opération permet au système de toujours travailler avec des coordonnées comprises entre 0 et 399 pas, évitant ainsi des erreurs de calcul potentielles ou des dépassements de capacité des variables lors de manœuvres répétées dans le même sens.
 
