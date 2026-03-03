@@ -15,13 +15,8 @@ Le matériel est constitué de :
 * un afficheur LCD 4 x 20 I2C avec SCL sur les broches A5 et SDA sur A4 ;
 * PAD 4 x 4 touches sur les broches D2 a D9 ;
 * un capteur Hall et un aimant pour le *homing* ;
-<<<<<<< HEAD
 * un moteur à pas NEMA 14 à 200 pas/rotation avec réduction 8:1 via A4988 sur les broches D11 (DIR) et D12 (STEP) et mise en œuvre avec la librairie `AccelStepper()`
-.
-=======
-* un moteur à pas NEMA 14 à 200 pas/rotation avec reduction 8:1 via A4988 sur les broches D11 (DIR) et D12 (STEP) et mise en œuvre avec la librairie AccelStepper()
 
->>>>>>> 92a44fee53cd2ee7a82fa362ae950c1e5b526e9a
 ## Exigences et contraintes
 
 L'entrée de la locomotive sur le pont et la sortie peut se faire sur la même voie ou sur deux voies différentes.
@@ -43,15 +38,9 @@ Actuellement, le logiciel est configuré pour un 40 voies.
 
 Pour dépasser cette limite, plusieurs modifications logicielles et matérielles seraient nécessaires :
 
-<<<<<<< HEAD
 1. Le code définit la constante `NB\_MAX\_VOIE` à 40.
 2. La fonction de saisie des voies indique explicitement qu'il « ne peut pas y avoir plus de 40 voies » et rejette toute saisie supérieure à ce nombre avec un message d'erreur.
 3. Le système utilise un moteur pas à pas avec une réduction aboutissant à 400 pas par révolution. Avec 40 voies, chaque voie est espacée exactement de 10 pas (400 / 40 = 10). Pour 80 voies, l'écart ne serait plus que de 5 pas entre chaque voie. Et le moteur utilisé ne pourrait positionner plus de 400 voies. Pour gérer un nombre différents de 40 voies, il faudrait modifier : a) le tableau nommé `tabVoie\[]` ; b) les messages affichés sur l'écran LCD (comme "Voie (1-40)") ; c) la logique de saisie du clavier dans la fonction `saisirVoie()`.
-=======
-1. Le code définit la constante `NB_MAX_VOIE` à 40.
-2. La fonction de saisie des voies indique explicitement qu'il « ne peut pas y avoir plus de 40 voies » et rejette toute saisie supérieure à ce nombre avec un message d'erreur.
-3. Le système utilise un moteur pas à pas avec une réduction aboutissant à 400 pas par révolution. Avec 40 voies, chaque voie est espacée exactement de 10 pas (400 / 40 = 10). Pour 80 voies, l'écart ne serait plus que de 5 pas entre chaque voie. Et le moteur utilisé ne pourrait positionner plus de 400 voies. Pour gérer un nombre différents de 40 voies, il faudrait modifier : a) le tableau nommé `tabVoie[]` ; b) les messages affichés sur l'écran LCD (comme "Voie (1-40)") ; c) la logique de saisie du clavier dans la fonction `saisirVoie()`.
->>>>>>> 92a44fee53cd2ee7a82fa362ae950c1e5b526e9a
 
 ## Logique de fonctionnement du pont tournant
 
@@ -60,10 +49,6 @@ Pour dépasser cette limite, plusieurs modifications logicielles et matérielles
 Ce mode est utilisé pour amener une locomotive de la voie principale vers l'une des 40 voies de garage.
 
 La séquence est la suivante :
-<<<<<<< HEAD
-
-=======
->>>>>>> 92a44fee53cd2ee7a82fa362ae950c1e5b526e9a
 * Positionnement initial : si le pont n'y est pas déjà, il se déplace automatiquement vers la voie d'entrée (définie comme la voie 0).
 * Embarquement : le système attend que l'utilisateur confirme que la locomotive est montée sur le pont (touche \*).
 * Destination : l'utilisateur saisit le numéro de la voie de garage (1 à 40) où il souhaite envoyer la locomotive.
@@ -74,30 +59,18 @@ La séquence est la suivante :
 Ce mode est utilisé pour sortir une locomotive d'une voie de garage afin de la ramener sur le réseau.
 
 La séquence est inversée :
-<<<<<<< HEAD
-
-=======
->>>>>>> 92a44fee53cd2ee7a82fa362ae950c1e5b526e9a
 * Positionnement initial : l'utilisateur doit d'abord saisir le numéro de la voie où se trouve la locomotive. Le pont se déplace alors vers cette voie.
 * Embarquement : le système attend que la locomotive monte sur le pont (confirmé par la touche \*).
 * Destination : le système sait que la destination est la voie d'entrée (voie 0).
 * Mouvement final : le pont retourne à la voie d'entrée, en effectuant ou non un retournement selon la demande.
 
-Résumé des différences :
+####Résumé des différences :
 
-<<<<<<< HEAD
 |Caractéristique|Mode Entrée (A)|Mode Sortie (B)|
 |-|-|-|
 |Point de départ|Voie d'entrée (0)|Voie sélectionnée (1-40)|
 |Point d'arrivée|Voie sélectionnée (1-40)|Voie d'entrée (0)|
 |Saisie de voie|Après l'embarquement|Avant l'embarquement|
-=======
-|  Caractéristique    |  Mode Entrée (A)          |  Mode Sortie (B)           |
-|---                  |---                        |---
-|  Point de départ    |  Voie d'entrée (0)        |  Voie sélectionnée (1-40)  |
-|  Point d'arrivée    |  Voie sélectionnée (1-40) |  Voie d'entrée (0)         |
-|  Saisie de voie     |  Après l'embarquement     |  Avant l'embarquement      |
->>>>>>> 92a44fee53cd2ee7a82fa362ae950c1e5b526e9a
 
 Dans les deux cas, le logiciel propose à l'utilisateur de choisir si un retournement (pivotement de 180°) est nécessaire avant d'atteindre la destination finale.
 
@@ -106,32 +79,16 @@ Dans les deux cas, le logiciel propose à l'utilisateur de choisir si un retourn
 L'interface utilisateur permet de piloter le pont via des commandes spécifiques sur le pavé numérique.
 
 Le système distingue deux types de manœuvre :
-<<<<<<< HEAD
-
 1. Touche 'A' pour une entrée : le pont se positionne d'abord sur la voie d'entrée (voie 0) pour recevoir une locomotive, puis se déplace vers la voie de destination choisie ;
 2. Touche 'B' pour une sortie : le pont se déplace vers une voie sélectionnée pour récupérer une locomotive, puis revient à la voie d'entrée/sortie.
-=======
-   1. Touche 'A' pour une entrée : le pont se positionne d'abord sur la voie d'entrée (voie 0) pour recevoir une locomotive, puis se déplace vers la voie de destination choisie ;
-   2. Touche 'B' pour une sortie : le pont se déplace vers une voie sélectionnée pour récupérer une locomotive, puis revient à la voie d'entrée/sortie.
->>>>>>> 92a44fee53cd2ee7a82fa362ae950c1e5b526e9a
 
 Pour choisir la voie, l'utilisateur doit saisir un numéro entre 1 et 40.
 
 Si un retournement de la locomotive est nécessaire, l'utilisateur doit presser :
-<<<<<<< HEAD
-
 1. Touche 'C' : retournement ;
 2. Touche 'D' : sans retournement.
 
 Annulation : La touche # permet d'abandonner la manœuvre en cours à tout moment.
-
-=======
-  1. Touche 'C' : retournement ;
-  2. Touche 'D' : sans retournement.
-
-Annulation : La touche \# permet d'abandonner la manœuvre en cours à tout moment.
->>>>>>> 92a44fee53cd2ee7a82fa362ae950c1e5b526e9a
-
 
 ## Optimisation du déplacement du pont tournant
 
@@ -168,4 +125,5 @@ En cas de dépassement du nombre de pas pour une révolution complète (compte t
 Cette nouvelle valeur "normalisée" est alors définie comme la position courante du moteur via la commande `setCurrentPosition(position)`.
 
 Cette opération permet au système de toujours travailler avec des coordonnées comprises entre 0 et 399 pas, évitant ainsi des erreurs de calcul potentielles ou des dépassements de capacité des variables lors de manœuvres répétées dans le même sens.
+
 
