@@ -53,6 +53,12 @@ Keypad kp = Keypad(makeKeymap(kpKeys), rowKpPin, colKpPin, ROWS, COLS);
 #define PIN_MOT_STEP 12
 // Broche Arduino pour le signal DIR (direction)
 #define PIN_MOT_DIR 11
+<<<<<<< HEAD
+//
+#define enablePin 10
+
+=======
+>>>>>>> ea1ec25f257218e1b0bb4427632941fa73bf7fea
 // Nombre de pas pour une rotation complète (200 pas * réduction 2:1)
 const int stepsPerRevolution = 400;
 //
@@ -138,7 +144,7 @@ void afficherLCD(const String &texte, const byte ligne, const bool effacement) {
    ========================================== */
 void setup() {
 
-  Serial.begin(115200);
+  Serial.begin(9600);
 
   // Nombre de lignes et colonnes du LCD
   LCD.begin(0x27, 20, 4);
@@ -148,9 +154,16 @@ void setup() {
   
   afficherLCD(VERSION, 0, true);
 
-  // Broches moteur
-  //pinMode(PIN_MOT_DIR,OUTPUT);
-  //pinMode(PIN_MOT_STEP,OUTPUT);
+  // Broches moteur PAP
+  pinMode(PIN_MOT_DIR,OUTPUT);
+  pinMode(PIN_MOT_STEP,OUTPUT);
+  pinMode(enablePin, OUTPUT);
+  digitalWrite(enablePin, LOW); // Active le driver (LOW = enabled sur A4988)
+
+  // Position initiale du moteur PAP
+  pontTournant.setCurrentPosition(0);
+
+  // Configuration moteur PAP
   pontTournant.setMaxSpeed(1000);
   pontTournant.setAcceleration(100);
 
