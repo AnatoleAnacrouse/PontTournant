@@ -53,12 +53,9 @@ Keypad kp = Keypad(makeKeymap(kpKeys), rowKpPin, colKpPin, ROWS, COLS);
 #define PIN_MOT_STEP 12
 // Broche Arduino pour le signal DIR (direction)
 #define PIN_MOT_DIR 11
-<<<<<<< HEAD
 //
 #define enablePin 10
 
-=======
->>>>>>> ea1ec25f257218e1b0bb4427632941fa73bf7fea
 // Nombre de pas pour une rotation complète (200 pas * réduction 2:1)
 const int stepsPerRevolution = 400;
 //
