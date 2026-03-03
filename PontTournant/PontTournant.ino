@@ -53,8 +53,8 @@ Keypad kp = Keypad(makeKeymap(kpKeys), rowKpPin, colKpPin, ROWS, COLS);
 #define PIN_MOT_STEP 12
 // Broche Arduino pour le signal DIR (direction)
 #define PIN_MOT_DIR 11
-// ???? 
-#define enablePin 10
+// Broche Arduino pour le signal ENA (enable)
+#define PIN_MOT_ENA 10
 
 // Nombre de pas pour une rotation complète (200 pas * réduction 2:1)
 const int stepsPerRevolution = 400;
@@ -151,11 +151,12 @@ void setup() {
   
   afficherLCD(VERSION, 0, true);
 
-  // Broches moteur PAP
+  // Configuration des broches moteur PAP
   pinMode(PIN_MOT_DIR,OUTPUT);
   pinMode(PIN_MOT_STEP,OUTPUT);
-  pinMode(enablePin, OUTPUT);
-  digitalWrite(enablePin, LOW); // Active le driver (LOW = enabled sur A4988)
+  pinMode(PIN_MOT_ENA, OUTPUT);
+  // Active le driver (LOW = enabled sur A4988)
+  digitalWrite(PIN_MOT_ENA, LOW); 
 
   // Position initiale du moteur PAP
   pontTournant.setCurrentPosition(0);
@@ -246,7 +247,7 @@ int saisirVoie() {
   afficherLCD("Voie (1-40) ou '*'", 1, false);
   do {
     touche = kp.getKey();
-    entreeValide = ((touche >= '1') && (touche <= '9') || (touche == '#'));
+    entreeValide = (((touche >= '1') && (touche <= '9')) || (touche == '#'));
   } while (!entreeValide);
 
   if (touche == '#') {
@@ -262,7 +263,7 @@ int saisirVoie() {
 
   do {
     touche = kp.getKey();
-    entreeValide = ((touche >= '0') && (touche <= '9') || (touche == '*') || (touche == '#'));
+    entreeValide = (((touche >= '0') && (touche <= '9')) || (touche == '*') || (touche == '#'));
   } while (!entreeValide);
 
   if (touche == '#') {
@@ -376,7 +377,7 @@ int attendreDeplacementEngin() {
   do {
     touche = kp.getKey();
     entreeValide = (touche == '*' );
-    if (!entreeValide) ; // tone(PIN_BUZZER, 220, 1/2*SECOND);
+    //if (!entreeValide) {}; // tone(PIN_BUZZER, 220, 1/2*SECOND);
   } while (!entreeValide);
 
   effacerLCD(3);
