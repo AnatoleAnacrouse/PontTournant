@@ -2,14 +2,13 @@
 //
 // TITRE       : Pont tournant
 // AUTEUR      : M. EPARDEAU et F. FRANKE
-// DATE        : 09/02/2025
+// DATE        : 7/03/2026
 //
-#define VERSION "  VERSION 1.0"
+#define VERSION "  VERSION 1.1"
 //
 //DESCRIPTION :
-//
+
 // --------------------------------------------------------------------
-//
 // Configuration de l'afficheur LCD
 //    - AFFICHEUR 4 x 20 I2C
 //       . SCL sur A5
@@ -19,13 +18,13 @@
 #include <LiquidCrystal_I2C.h>
 // Initialisation de l'écran LCD : adresse 0x27, 20 colonnes, 4 lignes
 LiquidCrystal_I2C LCD(0x27, 20, 4);
-//
-//    - PAD 4 * 4 touches
-//      . broches D2 a D9
-//
+
 // --------------------------------------------------------------------
 // Configuration du pavé numérique
+//    - PAD 4 * 4 touches
+//      . broches D2 à D9
 //
+// Bibliothèque pour lle pavé numérique
 #include <Keypad.h>
 #define ROWS 4
 #define COLS 4
@@ -37,9 +36,9 @@ const char kpKeys[ROWS][COLS] = {
 };
 
 // Broches Arduino connectées aux lignes du clavier (9, 8, 7, 6)
-const byte rowKpPin [4] = {9, 8, 7, 6};
+/*const*/ byte rowKpPin [4] = {9, 8, 7, 6}; // const génére un warning
 // Broches Arduino connectées aux colonnes du clavier (5, 4, 3, 2)
-const byte colKpPin [4] = {5, 4, 3, 2};
+/*const*/ byte colKpPin [4] = {5, 4, 3, 2}; // const génére un warning
 // Initialisation du clavier avec la configuration définie
 Keypad kp = Keypad(makeKeymap(kpKeys), rowKpPin, colKpPin, ROWS, COLS);
 
@@ -55,7 +54,7 @@ Keypad kp = Keypad(makeKeymap(kpKeys), rowKpPin, colKpPin, ROWS, COLS);
 #define PIN_MOT_DIR 11
 // Broche Arduino pour le signal ENA (enable)
 #define PIN_MOT_ENA 10
-
+//
 // Nombre de pas pour une rotation complète (200 pas * réduction 2:1)
 const int stepsPerRevolution = 400;
 //
@@ -63,7 +62,7 @@ const int stepsPerRevolution = 400;
 // Cette librairie  elle permet de définir une vitesse maximale (setMaxSpeed) 
 // et une accélération (setAcceleration), ce qui assure des démarrages 
 // et des arrêts progressifs pour le pont tournant
-AccelStepper pontTournant(1, PIN_MOT_STEP, PIN_MOT_DIR);
+AccelStepper pontTournant(AccelStepper::DRIVER, PIN_MOT_STEP, PIN_MOT_DIR);
 
 // --------------------------------------------------------------------
 // Constantes globales
@@ -280,8 +279,7 @@ int saisirVoie() {
   }
 
   // il ne peut pas y avoir plus de 40 voies
-  else if (voie < 5)
-   {
+  else if (voie < 5) {
     if ((touche >= '0') && (touche <= '9')) {
       voie = (voie * 10) + touche - '0';
       entreeValide = (voie <= NB_MAX_VOIE);
@@ -298,6 +296,8 @@ int saisirVoie() {
         return voie;
       }
     }
+    // CAS NON TRAITE => EXCEPTION
+    else return ERREUR;
   }
   else {
     afficherLCD("ERREUR", 3, false);
@@ -386,6 +386,13 @@ int attendreDeplacementEngin() {
 
 /* ==================================
   Optimiser le trajet du pont roulant
+
+  Le pont roulant peut tourner dans les deux sens SAM et SIAM.
+  Pour minimiser le déplacement du pont, on calcule la distance 
+  entre la position actuelle et la cible. Si cette distance est plus grande
+  que la moitié d’un tour complet, on tourne dans l’autre sens. 
+  Pour cela, au lieu d'ajouter la distance qui sépare la position actuelle
+  vers la position cible, on soustrait cette distance.
    ================================== */
 int calculerPlusCourtChemin(int currentPos, int targetPos) {
 
@@ -409,28 +416,31 @@ int calculerPlusCourtChemin(int currentPos, int targetPos) {
 /* ==================================================
    Deplacer le PT de la voie actuelle à la voie cible
    
-   Afficher "En rotation"
    Si retournement demandé alors calculer la voie opposée : voie = (20 + voie) % 40
-   Si déjà sur la voie alors retourner OK
+   Si déjà sur la voie alors terminer en retournant OK
+
+   Afficher "En rotation"
+   Normaliser la position actuelle si > stepsPerRevolution pas
    
-   Normaliser la position actuelle si > 400 pas
-   
-   Calculer la distance optimale avec calculerPlusCourtChemin()
+   Calculer le sens d erotation optimal (SAM ou SIAM)
    Déplacer le moteur à la position cible
    Mettre à jour la voie courante
    
    Effacer le message "En rotation"
    Retourner OK
-   
    ================================================== */
-
 int deplacerPT(const int voieCible, const int retournement) {
-  int voie = voieCible;
 
-  afficherLCD("En rotation", 3, false);
+  int voie = voieCible;
 
   // Si c'est un retournement alors choisir la voie opposée (pivot de 180 deg.)
   if (retournement == RETOURNEMENT) {
+    // Pour retourner le pont il faut le positionner sur la voie d'en face
+    // (puisque le nombre de voies est pair)
+    // le calcul du modulo (operateur %) permet de rester dans l'intervalle [1..NB_MAX_VOIE]
+    // Exemple : sur la voie 30, la voie en face est la voie 10
+    //           à la voie 30 j'ajoute 20 (40 voies / 2) cela donne la voie 50
+    //           et 50 modulo 40 donne 10 (reste de la division de 50 / 40)
     voie = (NB_MAX_VOIE / 2 + voie) % NB_MAX_VOIE;
   }
 
@@ -440,13 +450,21 @@ int deplacerPT(const int voieCible, const int retournement) {
     return OK;
   }
 
+  afficherLCD("En rotation", 3, false);
+
   // Normaliser si necessaire
+  // La librairie AccelStepper calcul un nombre de pas absolue
+  // Si par exemple je fais deux tours d'un moteur 40 pas
+  // la position courante du moteur sera égale à 80
+  // Le calcul du modulo parmet de ramener la position
+  // dans l'intervalle [10..stepsPerRevolution]
   if (abs(pontTournant.currentPosition()) > stepsPerRevolution) {
     int position = pontTournant.currentPosition() % stepsPerRevolution;
     pontTournant.setCurrentPosition(position);
   }
 
-  // Calculer la maneuvre optimale
+  // Calculer la maneuvre optimale (ie tournant SAM ou SIAM 
+  // afin de minimiser le nombre de pas)
   int distance = calculerPlusCourtChemin(tabVoie[voieCourante], tabVoie[voie]);
 
   // Réaliser la manoeuvre

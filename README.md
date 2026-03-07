@@ -38,9 +38,9 @@ Actuellement, le logiciel est configuré pour un 40 voies.
 
 Pour dépasser cette limite, plusieurs modifications logicielles et matérielles seraient nécessaires :
 
-1. Le code définit la constante `NB\_MAX\_VOIE` à 40.
+1. Le code définit la constante `NB_MAX_VOIE` à 40.
 2. La fonction de saisie des voies indique explicitement qu'il « ne peut pas y avoir plus de 40 voies » et rejette toute saisie supérieure à ce nombre avec un message d'erreur.
-3. Le système utilise un moteur pas à pas avec une réduction aboutissant à 400 pas par révolution. Avec 40 voies, chaque voie est espacée exactement de 10 pas (400 / 40 = 10). Pour 80 voies, l'écart ne serait plus que de 5 pas entre chaque voie. Et le moteur utilisé ne pourrait positionner plus de 400 voies. Pour gérer un nombre différents de 40 voies, il faudrait modifier : a) le tableau nommé `tabVoie\[]` ; b) les messages affichés sur l'écran LCD (comme "Voie (1-40)") ; c) la logique de saisie du clavier dans la fonction `saisirVoie()`.
+3. Le système utilise un moteur pas à pas avec une réduction aboutissant à 400 pas par révolution. Avec 40 voies, chaque voie est espacée exactement de 10 pas (400 / 40 = 10). Pour 80 voies, l'écart ne serait plus que de 5 pas entre chaque voie. Et le moteur utilisé ne pourrait positionner plus de 400 voies. Pour gérer un nombre différents de 40 voies, il faudrait modifier : a) le tableau nommé `tabVoie[]` ; b) les messages affichés sur l'écran LCD (comme "Voie (1-40)") ; c) la logique de saisie du clavier dans la fonction `saisirVoie()`.
 
 ## Logique de fonctionnement du pont tournant
 
@@ -102,7 +102,7 @@ Voici comment fonctionne cette optimisation :
   SI la distance dépasse un demi-tour ALORS
      SI la distance est positive ALORS
         soustraire un tour complet
-   SINON (la distance est négative) ALORS
+     SINON (la distance est négative) ALORS
         ajouter un tour complet
      FIN SI
  FIN SI
